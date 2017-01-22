@@ -1,0 +1,20 @@
+spring:
+  application:
+     name: rss-service
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: rss
+
+# Discovery Server Access
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:1111/eureka/
+  instance:
+    leaseRenewalIntervalInSeconds: 5   # DO NOT DO THIS IN PRODUCTION
+
+# HTTP Server
+server:
+  port: 5555   # HTTP (Tomcat) port
