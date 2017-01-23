@@ -1,5 +1,8 @@
 package com.epiaggregator.services.rss.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
@@ -7,7 +10,9 @@ import java.util.Date;
 
 public class Entry {
     @Id
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId feedId;
     private String author;
     private String link;

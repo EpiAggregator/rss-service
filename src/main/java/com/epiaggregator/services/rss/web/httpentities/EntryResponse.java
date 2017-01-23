@@ -3,6 +3,7 @@ package com.epiaggregator.services.rss.web.httpentities;
 import java.util.Date;
 
 public class EntryResponse {
+    private String id;
     private String author;
     private String link;
     private String title;
@@ -12,12 +13,21 @@ public class EntryResponse {
     public EntryResponse() {
     }
 
-    public EntryResponse(String author, String link, String title, Date pubDate, String description) {
+    public EntryResponse(String id, String author, String link, String title, Date pubDate, String description) {
+        this.id = id;
         this.author = author;
         this.link = link;
         this.title = title;
         this.pubDate = pubDate;
         this.description = description;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getAuthor() {
