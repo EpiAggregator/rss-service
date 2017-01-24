@@ -1,11 +1,22 @@
 spring:
   application:
      name: rss-service
+  mvc:
+    async:
+      request-timeout: 5000
   data:
     mongodb:
       host: localhost
       port: 27017
       database: rss
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
 
 # Discovery Server Access
 eureka:
@@ -18,3 +29,6 @@ eureka:
 # HTTP Server
 server:
   port: 5555   # HTTP (Tomcat) port
+
+jwt:
+  secretKey: RHNuM2dNWWF6aDVhNkM0M2E1eG84ejcz

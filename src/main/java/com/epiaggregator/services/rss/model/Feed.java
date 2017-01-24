@@ -12,6 +12,8 @@ public class Feed {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId userId;
     private String description;
     private String title;
     private String link;
@@ -22,12 +24,21 @@ public class Feed {
     public Feed() {
     }
 
-    public Feed(String description, String title, String link, String feedUri, String image) {
+    public Feed(ObjectId userId, String description, String title, String link, String feedUri, String image) {
+        this.userId = userId;
         this.description = description;
         this.title = title;
         this.link = link;
         this.feedUri = feedUri;
         this.image = image;
+    }
+
+    public ObjectId getUserId() {
+        return userId;
+    }
+
+    public void setUserId(ObjectId userId) {
+        this.userId = userId;
     }
 
     public ObjectId getId() {
