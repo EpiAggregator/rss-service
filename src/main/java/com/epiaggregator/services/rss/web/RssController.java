@@ -27,6 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1")
@@ -73,17 +74,40 @@ public class RssController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/feeds/{id}/entries")
     public ResponseEntity<List<Entry>> getEntriesByFeed(@PathVariable(value = "id") String feedId) {
+        ObjectId userId = verifyJwtAndReturnUserId();
+        Feed feed = feedRepository.findOne(feedId);
+        if (!Objects.equals(userId, feed.getUserId())) {
+            throw new UnauthorizedException();
+        }
+
         return new ResponseEntity<>(entryRepository.findByFeedId(new ObjectId(feedId)), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feeds")
     public ResponseEntity<List<Feed>> getFeeds() {
-        return new ResponseEntity<>(feedRepository.findAll(), HttpStatus.OK);
+        ObjectId userId = verifyJwtAndReturnUserId();
+
+        return new ResponseEntity<>(feedRepository.findAllByUserId(userId), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/feeds/{id}")
     public ResponseEntity<Feed> getFeed(@PathVariable(value = "id") String feedId) {
-        return new ResponseEntity<>(feedRepository.findOne(feedId), HttpStatus.OK);
+        ObjectId userId = verifyJwtAndReturnUserId();
+
+        return new ResponseEntity<>(feedRepository.findOneByIdAndUserId(feedId, userId), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/feeds/entries")
+    public ResponseEntity<List<Entry>> getAllEntries() {
+        ObjectId userId = verifyJwtAndReturnUserId();
+
+        List<Entry> entries = new ArrayList<>();
+        List<Feed> feeds = feedRepository.findAllByUserId(userId);
+        for (Feed f : feeds) {
+            entries.addAll(entryRepository.findByFeedId(f.getId()));
+        }
+
+        return new ResponseEntity<>(entries, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PATCH, path = "/feeds/{id}/entries/{entryId}")
@@ -98,7 +122,7 @@ public class RssController {
     }
 
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(JwtException.class)
+    @ExceptionHandler({JwtException.class, UnauthorizedException.class})
     private void handleJwtVerificationFailure(JwtException e) {
     }
 
