@@ -1,0 +1,6 @@
+eureka:
+  client:
+    enabled: false
+
+jwt:
+  secretKey: RHNuM2dNWWF6aDVhNkM0M2E1eG84ejcz

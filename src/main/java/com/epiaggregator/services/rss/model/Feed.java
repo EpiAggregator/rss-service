@@ -33,6 +33,16 @@ public class Feed {
         this.image = image;
     }
 
+    public Feed(ObjectId id, ObjectId userId, String description, String title, String link, String feedUri, String image) {
+        this.id = id;
+        this.userId = userId;
+        this.description = description;
+        this.title = title;
+        this.link = link;
+        this.feedUri = feedUri;
+        this.image = image;
+    }
+
     public ObjectId getUserId() {
         return userId;
     }

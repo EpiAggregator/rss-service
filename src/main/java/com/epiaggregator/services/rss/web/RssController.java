@@ -75,6 +75,10 @@ public class RssController {
     @RequestMapping(method = RequestMethod.GET, path = "/feeds/{id}/entries")
     public ResponseEntity<List<Entry>> getEntriesByFeed(@PathVariable(value = "id") String feedId) {
         ObjectId userId = verifyJwtAndReturnUserId();
+        if (userId == null) {
+            throw new UnauthorizedException();
+        }
+
         Feed feed = feedRepository.findOne(feedId);
         if (!Objects.equals(userId, feed.getUserId())) {
             throw new UnauthorizedException();
@@ -86,6 +90,9 @@ public class RssController {
     @RequestMapping(method = RequestMethod.GET, path = "/feeds")
     public ResponseEntity<List<Feed>> getFeeds() {
         ObjectId userId = verifyJwtAndReturnUserId();
+        if (userId == null) {
+            throw new UnauthorizedException();
+        }
 
         return new ResponseEntity<>(feedRepository.findAllByUserId(userId), HttpStatus.OK);
     }
@@ -93,6 +100,9 @@ public class RssController {
     @RequestMapping(method = RequestMethod.GET, path = "/feeds/{id}")
     public ResponseEntity<Feed> getFeed(@PathVariable(value = "id") String feedId) {
         ObjectId userId = verifyJwtAndReturnUserId();
+        if (userId == null) {
+            throw new UnauthorizedException();
+        }
 
         return new ResponseEntity<>(feedRepository.findOneByIdAndUserId(feedId, userId), HttpStatus.OK);
     }
@@ -100,6 +110,9 @@ public class RssController {
     @RequestMapping(method = RequestMethod.GET, path = "/feeds/entries")
     public ResponseEntity<List<Entry>> getAllEntries() {
         ObjectId userId = verifyJwtAndReturnUserId();
+        if (userId == null) {
+            throw new UnauthorizedException();
+        }
 
         List<Entry> entries = new ArrayList<>();
         List<Feed> feeds = feedRepository.findAllByUserId(userId);
@@ -114,16 +127,25 @@ public class RssController {
     public ResponseEntity<Entry> updateEntry(@PathVariable(value = "id") String feedId,
                                              @PathVariable(value = "entryId") String entryId,
                                              @RequestBody UpdateEntryRequest request) {
+        ObjectId userId = verifyJwtAndReturnUserId();
+        if (userId == null) {
+            throw new UnauthorizedException();
+        }
+
         Entry entry = entryRepository.findByIdAndFeedId(new ObjectId(entryId), new ObjectId(feedId));
-        entry.setRead(request.getRead());
-        entry.setFavorite(request.getFavorite());
+        if (request.getRead() != null) {
+            entry.setRead(request.getRead());
+        }
+        if (request.getFavorite() != null) {
+            entry.setFavorite(request.getFavorite());
+        }
         entryRepository.save(entry);
         return new ResponseEntity<>(entry, HttpStatus.OK);
     }
 
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({JwtException.class, UnauthorizedException.class})
-    private void handleJwtVerificationFailure(JwtException e) {
+    private void handleJwtVerificationFailure(RuntimeException e) {
     }
 
     private ObjectId verifyJwtAndReturnUserId() {
