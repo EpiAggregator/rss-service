@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -47,8 +46,6 @@ public class RssControllerTests {
     private FeedRepository feedRepository;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private MockHttpServletRequest mockHttpServletRequest;
 
     @Test
     public void testAddFeed() throws Exception {
